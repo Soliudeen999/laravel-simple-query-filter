@@ -3,14 +3,20 @@
 namespace Soliudeen999\QueryFilter\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use InvalidArgumentException;
 
+/**
+ * @mixin Model
+ */
 trait HasFilter
 {
     private array $allowedComparisonOperators = ['gt', 'lt', 'eq', 'btw', 'in', 'neq', 'gte', 'lte'];
 
     public function scopeFilter(Builder $query, ?array $filters = null): Builder
     {
+        // Check for filterables property at runtime
         if (! property_exists($this, 'filterables')) {
             throw new InvalidArgumentException('$filterables property not defined in this model');
         }
@@ -131,6 +137,7 @@ trait HasFilter
         }
 
         if ($column === 'withTrashed' && $this->usesSoftDeletes()) {
+            /** @var Builder&\Illuminate\Database\Eloquent\SoftDeletingScope $query */
             $value === 'with' ? $query->withTrashed() : $query->onlyTrashed();
         } else {
             $query->where($column, $value);
@@ -140,7 +147,7 @@ trait HasFilter
     protected function usesSoftDeletes(): bool
     {
         return in_array(
-            "Illuminate\Database\Eloquent\SoftDeletes",
+            SoftDeletes::class,
             class_uses_recursive($this)
         );
     }
@@ -210,6 +217,7 @@ trait HasFilter
 
         $searchKeyword = $searchKeyword ?? request('search');
         if ($searchKeyword && method_exists($this, 'scopeSearch')) {
+            /** @var Builder $builder */
             $builder = $this->scopeSearch($builder, $searchKeyword);
         }
 

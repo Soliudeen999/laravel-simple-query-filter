@@ -2,10 +2,8 @@
 
 namespace Soliudeen999\QueryFilter\Tests;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Soliudeen999\QueryFilter\Traits\HasFilter;
 
 class FilterTest extends TestCase
 {
@@ -19,6 +17,7 @@ class FilterTest extends TestCase
             $table->string('email')->nullable();
             $table->integer('age')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -31,13 +30,9 @@ class FilterTest extends TestCase
     /** @test */
     public function it_can_filter_using_basic_where_clause()
     {
-        $model = new class extends Model {
-            use HasFilter;
-            protected $table = 'test_models';
-            protected array $filterables = ['name', 'email'];
-        };
-
+        $model = new TestModel();
         $query = $model->filter(['name' => 'John']);
+        
         $this->assertStringContainsString('where', $query->toSql());
         $this->assertStringContainsString('name', $query->toSql());
     }
@@ -45,13 +40,9 @@ class FilterTest extends TestCase
     /** @test */
     public function it_can_filter_using_operators()
     {
-        $model = new class extends Model {
-            use HasFilter;
-            protected $table = 'test_models';
-            protected array $filterables = ['age'];
-        };
-
+        $model = new TestModel();
         $query = $model->filter(['age' => ['gt' => 18]]);
+        
         $sql = $query->toSql();
         $this->assertStringContainsString('where', $sql);
         $this->assertStringContainsString('age', $sql);
@@ -61,25 +52,16 @@ class FilterTest extends TestCase
     /** @test */
     public function it_can_filter_using_between_operator()
     {
-        $model = new class extends Model {
-            use HasFilter;
-            protected $table = 'test_models';
-            protected array $filterables = ['age'];
-        };
-
+        $model = new TestModel();
         $query = $model->filter(['age' => ['btw' => [18, 65]]]);
+        
         $this->assertStringContainsString('between', strtolower($query->toSql()));
     }
 
     /** @test */
     public function it_can_handle_empty_filters()
     {
-        $model = new class extends Model {
-            use HasFilter;
-            protected $table = 'test_models';
-            protected array $filterables = ['name', 'email'];
-        };
-
+        $model = new TestModel();
         $query = $model->filter([]);
         $baseQuery = $model->newQuery();
         
@@ -87,5 +69,19 @@ class FilterTest extends TestCase
             trim(preg_replace('/\s+/', ' ', $baseQuery->toSql())),
             trim(preg_replace('/\s+/', ' ', $query->toSql()))
         );
+    }
+
+    /** @test */
+    public function it_can_search_and_filter()
+    {
+        $model = new TestModel();
+        $query = $model->filterSearchLoad(
+            filters: ['status' => 'active'],
+            searchKeyword: 'john'
+        );
+        
+        $sql = $query->toSql();
+        $this->assertStringContainsString('where', $sql);
+        $this->assertStringContainsString('LIKE', strtoupper($sql));
     }
 }
