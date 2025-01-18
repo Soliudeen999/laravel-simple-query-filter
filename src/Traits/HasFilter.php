@@ -9,6 +9,9 @@ use InvalidArgumentException;
 
 /**
  * @mixin Model
+ * @method static Builder filter(?array $filters = null)
+ * @method static Builder filterSearchLoad(?array $filters = null, ?string $searchKeyword = null, string $loads = '')
+ * @method Builder scopeSearch(Builder $query, string $keyword)
  */
 trait HasFilter
 {
@@ -137,7 +140,7 @@ trait HasFilter
         }
 
         if ($column === 'withTrashed' && $this->usesSoftDeletes()) {
-            /** @var Builder&\Illuminate\Database\Eloquent\SoftDeletingScope $query */
+            /** @var Builder|SoftDeletes $query */
             $value === 'with' ? $query->withTrashed() : $query->onlyTrashed();
         } else {
             $query->where($column, $value);
@@ -216,6 +219,8 @@ trait HasFilter
         $builder = $this->scopeFilter($query, $filters);
 
         $searchKeyword = $searchKeyword ?? request('search');
+        
+        /** @var Model|static $this */
         if ($searchKeyword && method_exists($this, 'scopeSearch')) {
             /** @var Builder $builder */
             $builder = $this->scopeSearch($builder, $searchKeyword);

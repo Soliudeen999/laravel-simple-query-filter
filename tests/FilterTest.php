@@ -28,7 +28,7 @@ class FilterTest extends TestCase
     }
 
     /** @test */
-    public function it_can_filter_using_basic_where_clause()
+    public function it_can_filter_using_basic_where_clause(): void
     {
         $model = new TestModel();
         $query = $model->filter(['name' => 'John']);
@@ -38,7 +38,7 @@ class FilterTest extends TestCase
     }
 
     /** @test */
-    public function it_can_filter_using_operators()
+    public function it_can_filter_using_operators(): void
     {
         $model = new TestModel();
         $query = $model->filter(['age' => ['gt' => 18]]);
@@ -50,7 +50,7 @@ class FilterTest extends TestCase
     }
 
     /** @test */
-    public function it_can_filter_using_between_operator()
+    public function it_can_filter_using_between_operator(): void
     {
         $model = new TestModel();
         $query = $model->filter(['age' => ['btw' => [18, 65]]]);
@@ -59,7 +59,7 @@ class FilterTest extends TestCase
     }
 
     /** @test */
-    public function it_can_handle_empty_filters()
+    public function it_can_handle_empty_filters(): void
     {
         $model = new TestModel();
         $query = $model->filter([]);
@@ -72,7 +72,7 @@ class FilterTest extends TestCase
     }
 
     /** @test */
-    public function it_can_search_and_filter()
+    public function it_can_search_and_filter(): void
     {
         $model = new TestModel();
         $query = $model->filterSearchLoad(

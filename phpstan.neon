@@ -6,6 +6,7 @@ parameters:
     excludePaths:
         - vendor/*
     ignoreErrors:
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::(withTrashed|onlyTrashed)#'
-        - '#Call to function property_exists\(\) with .* will always evaluate to true#'
-        - '#Call to function method_exists\(\) with .* will always evaluate to false#' 
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::(filter|filterSearchLoad|withTrashed|onlyTrashed)#'
+        - '#Parameter \$this of method [a-zA-Z0-9\\_]+::scopeSearch\(\) has invalid type#'
+        - '#Call to function method_exists\(\) with [a-zA-Z0-9\\_]+ and ''scopeSearch'' will always evaluate to true#'
+        - '#PHPDoc tag @var for variable \$query contains unresolvable type#' 
