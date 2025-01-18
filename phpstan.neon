@@ -4,5 +4,4 @@ parameters:
         - src
         - tests
     excludePaths:
-        - vendor/*
-    checkMissingIterableValueType: false 
+        - vendor/* 

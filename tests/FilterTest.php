@@ -5,7 +5,6 @@ namespace Soliudeen999\QueryFilter\Tests;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Orchestra\Testbench\TestCase;
 use Soliudeen999\QueryFilter\Traits\HasFilter;
 
 class FilterTest extends TestCase
@@ -14,7 +13,6 @@ class FilterTest extends TestCase
     {
         parent::setUp();
         
-        // Create test table
         Schema::create('test_models', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
@@ -30,11 +28,6 @@ class FilterTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getPackageProviders($app)
-    {
-        return ['Soliudeen999\QueryFilter\Providers\QueryFilterServiceProvider'];
-    }
-
     /** @test */
     public function it_can_filter_using_basic_where_clause()
     {
@@ -45,14 +38,8 @@ class FilterTest extends TestCase
         };
 
         $query = $model->filter(['name' => 'John']);
-        $this->assertStringContainsString(
-            'where',
-            $query->toSql()
-        );
-        $this->assertStringContainsString(
-            'name',
-            $query->toSql()
-        );
+        $this->assertStringContainsString('where', $query->toSql());
+        $this->assertStringContainsString('name', $query->toSql());
     }
 
     /** @test */
@@ -65,18 +52,10 @@ class FilterTest extends TestCase
         };
 
         $query = $model->filter(['age' => ['gt' => 18]]);
-        $this->assertStringContainsString(
-            'where',
-            $query->toSql()
-        );
-        $this->assertStringContainsString(
-            'age',
-            $query->toSql()
-        );
-        $this->assertStringContainsString(
-            '>',
-            $query->toSql()
-        );
+        $sql = $query->toSql();
+        $this->assertStringContainsString('where', $sql);
+        $this->assertStringContainsString('age', $sql);
+        $this->assertStringContainsString('>', $sql);
     }
 
     /** @test */
@@ -89,10 +68,7 @@ class FilterTest extends TestCase
         };
 
         $query = $model->filter(['age' => ['btw' => [18, 65]]]);
-        $this->assertStringContainsString(
-            'between',
-            strtolower($query->toSql())
-        );
+        $this->assertStringContainsString('between', strtolower($query->toSql()));
     }
 
     /** @test */
@@ -105,8 +81,10 @@ class FilterTest extends TestCase
         };
 
         $query = $model->filter([]);
+        $baseQuery = $model->newQuery();
+        
         $this->assertEquals(
-            trim(preg_replace('/\s+/', ' ', $model->newQuery()->toSql())),
+            trim(preg_replace('/\s+/', ' ', $baseQuery->toSql())),
             trim(preg_replace('/\s+/', ' ', $query->toSql()))
         );
     }
