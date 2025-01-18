@@ -18,8 +18,7 @@
         "friendsofphp/php-cs-fixer": "^3.68",
         "orchestra/testbench": "^6.0|^7.0|^8.0",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^9.0|^10.0",
-        "ext-xdebug": "*"
+        "phpunit/phpunit": "^9.0|^10.0"
     },
     "autoload": {
         "psr-4": {

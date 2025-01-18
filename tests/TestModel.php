@@ -17,4 +17,4 @@ class TestModel extends Model
         return $query->where('name', 'LIKE', "%{$keyword}%")
                     ->orWhere('email', 'LIKE', "%{$keyword}%");
     }
-} 
+}
