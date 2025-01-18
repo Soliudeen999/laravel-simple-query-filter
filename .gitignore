@@ -17,3 +17,4 @@ coverage
 .php-cs-fixer.cache
 build/
 .phpunit.cache/ 
+.composer.lock
