@@ -18,4 +18,4 @@ class InstallQueryFilterCommand extends Command
         
         $this->info('Installation completed successfully!');
     }
-} 
+}

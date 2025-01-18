@@ -11,7 +11,7 @@ trait HasFilter
 
     public function scopeFilter(Builder $query, ?array $filters = null): Builder
     {
-        if (!property_exists($this, 'filterables')) {
+        if (! property_exists($this, 'filterables')) {
             throw new InvalidArgumentException('$filterables property not defined in this model');
         }
 
@@ -27,7 +27,7 @@ trait HasFilter
             return $query;
         }
 
-        if (!empty($this->filterables)) {
+        if (! empty($this->filterables)) {
             foreach ($filters as $column => $value) {
                 if ($this->isFilterableColumn($column)) {
                     $this->applyFilter($query, $column, $value);
@@ -45,7 +45,7 @@ trait HasFilter
 
     protected function isFilterableColumn(string $column): bool
     {
-        return in_array($column, $this->filterables) || 
+        return in_array($column, $this->filterables) ||
                array_key_exists($column, $this->filterables);
     }
 
@@ -54,18 +54,21 @@ trait HasFilter
         // Handle relationship filters
         if ($this->isRelationshipFilter($column)) {
             $this->applyRelationshipFilter($query, $column, $value);
+
             return;
         }
 
         // Handle array filters with operators
         if (is_array($value) && $this->hasOperators($value)) {
             $this->applyOperatorFilters($query, $column, $value);
+
             return;
         }
 
         // Handle special values
         if ($this->isSpecialFilter($column)) {
             $this->applySpecialFilter($query, $column, $value);
+
             return;
         }
 
@@ -75,8 +78,8 @@ trait HasFilter
 
     protected function isRelationshipFilter(string $column): bool
     {
-        return isset($this->filterables[$column]) && 
-               is_string($this->filterables[$column]) && 
+        return isset($this->filterables[$column]) &&
+               is_string($this->filterables[$column]) &&
                str_contains($this->filterables[$column], ':');
     }
 
@@ -123,7 +126,7 @@ trait HasFilter
 
     protected function applySpecialFilter(Builder $query, string $column, $value): void
     {
-        if (!in_array($value, $this->filterables[$column])) {
+        if (! in_array($value, $this->filterables[$column])) {
             return;
         }
 
@@ -137,7 +140,7 @@ trait HasFilter
     protected function usesSoftDeletes(): bool
     {
         return in_array(
-            "Illuminate\Database\Eloquent\SoftDeletes", 
+            "Illuminate\Database\Eloquent\SoftDeletes",
             class_uses_recursive($this)
         );
     }
@@ -150,7 +153,7 @@ trait HasFilter
             $data = json_decode($data);
         }
 
-        if ($operator === 'between' && (!is_array($data) || count($data) !== 2)) {
+        if ($operator === 'between' && (! is_array($data) || count($data) !== 2)) {
             return $query;
         }
 
@@ -178,11 +181,12 @@ trait HasFilter
 
     protected function isJsonArray(string|array $data): bool
     {
-        if (!is_string($data)) {
+        if (! is_string($data)) {
             return false;
         }
         
         $array = json_decode($data, true);
+
         return is_array($array) && json_last_error() === JSON_ERROR_NONE;
     }
 
@@ -211,11 +215,11 @@ trait HasFilter
 
         if ($loads) {
             $relations = array_filter(explode(',', $loads));
-            if (!empty($relations)) {
+            if (! empty($relations)) {
                 $builder->with($relations);
             }
         }
 
         return $builder;
     }
-} 
+}
