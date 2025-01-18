@@ -2,11 +2,20 @@
     "name": "soliudeen999/laravel-simple-query-filter",
     "description": "A powerful and flexible query filter system for Laravel applications",
     "type": "library",
+    "keywords": [
+        "laravel",
+        "query",
+        "filter",
+        "eloquent",
+        "search"
+    ],
+    "homepage": "https://github.com/Soliudeen999/laravel-simple-query-filter",
     "license": "MIT",
     "authors": [
         {
             "name": "Soliudeen999",
-            "email": "soliudeen999@gmail.com"
+            "email": "soliudeen999@gmail.com",
+            "role": "Developer"
         }
     ],
     "require": {
